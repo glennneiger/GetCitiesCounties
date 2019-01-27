@@ -43,7 +43,7 @@ namespace GetCitiesCounties
                 }
 
                 var json = JsonConvert.SerializeObject(list);
-                File.WriteAllText(@"C:\test.json", json);
+                File.WriteAllText(@"test.json", json);
 
                 Console.WriteLine(@"Done, extracted cities and states to json file C:\test.json");
                 Console.ReadLine();
