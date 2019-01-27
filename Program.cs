@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
@@ -22,6 +23,7 @@ namespace GetCitiesCounties
                 var htmlDoc = new HtmlDocument();
                 htmlDoc.LoadHtml(htmlContent);
                 var list = new List<dynamic>();
+                var state = string.Empty;
                 var nodes = htmlDoc.DocumentNode.SelectNodes("//table[@class='wikitable sortable']//tr");
 
                 Console.WriteLine(@"Processing Rows");
@@ -31,8 +33,13 @@ namespace GetCitiesCounties
                 {
                     if (rowIndex++ > 0)
                     {
-                        var county = row.SelectNodes("td")[1].InnerText;
-                        var state = row.SelectNodes("td")[2].InnerText;
+                        var county = row.SelectNodes("td")[0].InnerText;
+                        var checkState = row.SelectNodes("td")[1].InnerText;
+                        if (! row.SelectNodes("td")[1].InnerText.Replace(",","").Replace("\n","").Trim().All(char.IsDigit))
+                        {
+                            state = row.SelectNodes("td")[1].InnerText;
+                        }
+
 
                         list.Add(new
                         {
@@ -43,7 +50,7 @@ namespace GetCitiesCounties
                 }
 
                 var json = JsonConvert.SerializeObject(list);
-                File.WriteAllText(@"test.json", json);
+                File.WriteAllText(@"countyDataMin.json", json);
 
                 Console.WriteLine(@"Done, extracted cities and states to json file C:\test.json");
                 Console.ReadLine();
